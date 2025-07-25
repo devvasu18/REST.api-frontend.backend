@@ -32,7 +32,7 @@ const [ setFilteredTasks] = useState([]);
 
 
   useEffect(() => {
-    setFilteredTasks(tasks); // Sync when tasks update
+    setTasks(tasks); // Sync when tasks update
   }, [tasks]);
   useEffect(() => {
     fetchTasks();
