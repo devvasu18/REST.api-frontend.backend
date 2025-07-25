@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from "react-router-dom";
+
 const BASE_URL = process.env.REACT_APP_API_URL; // Ensure this is set in your .env file
 const TaskList = () => {
   const [tasks, setTasks] = useState([]);
@@ -9,7 +11,7 @@ const TaskList = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortOrder, setSortOrder] = useState('none');
 const [ setFilteredTasks] = useState([]);
-
+const navigate = useNavigate();
 
 
   // 🔁 Fetch tasks
@@ -133,12 +135,13 @@ const [ setFilteredTasks] = useState([]);
         <button
   className="btn btn-primary"
   onClick={async () => {
-    await handleAdd();
-    window.location.href = "https://frontend-km74.onrender.com/tasks"; // ❗ Redirects to the tasks page
+    await handleAdd();        // your task-adding logic
+    navigate("/tasks");       // navigate without full reload
   }}
 >
   Add Task
 </button>
+
 
       </div>
 
