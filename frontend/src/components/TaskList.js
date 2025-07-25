@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-
+const BASE_URL = process.env.REACT_APP_API_URL; // Ensure this is set in your .env file
 const TaskList = () => {
   const [tasks, setTasks] = useState([]);
   const [title, setTitle] = useState('');
@@ -8,6 +8,7 @@ const TaskList = () => {
   const [dueDate, setDueDate] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [sortOrder, setSortOrder] = useState('none');
+const [ setFilteredTasks] = useState([]);
 
 
 
