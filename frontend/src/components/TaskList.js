@@ -20,7 +20,7 @@ const TaskList = () => {
   }
 
   try {
-    const res = await axios.get('http://localhost:5000/api/tasks', {
+    const res = await axios.get("https://backend-bgcb.onrender.com/api/tasks", {
       headers: {
         Authorization: "Bearer " + token
       }
@@ -71,7 +71,7 @@ try {
 
   // ❌ Delete task
   const handleDelete = async (id) => {
-    await axios.delete(`http://localhost:5000/api/tasks/${id}`, {
+    await axios.delete(`https://backend-bgcb.onrender.com/api/tasks/${id}`, {
       headers: {
         Authorization: "Bearer " + localStorage.getItem("token")
       }
@@ -82,7 +82,7 @@ try {
   // ✅ Toggle completion with checkbox
   const toggleCompletion = async (task) => {
     try {
-      const res = await axios.put(`http://localhost:5000/api/tasks/${task._id}`,
+      const res = await axios.put(`https://backend-bgcb.onrender.com/api/tasks/${task._id}`,
         { completed: !task.completed },
         {
           headers: {

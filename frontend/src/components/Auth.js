@@ -18,13 +18,11 @@ const Auth = () => {
 
   const handleSubmit = async (e) => {
   e.preventDefault();
-  const baseURL = "http://localhost:5000"; // ✅ backend server
-  const url = isLogin ? `${baseURL}/api/auth/login` : `${baseURL}/api/auth/signup`;
-
-  const BASE_URL = process.env.REACT_APP_API_URL;
+ const BASE_URL = process.env.REACT_APP_API_URL;
+  const url = isLogin ? `${BASE_URL}/api/auth/login` : `${BASE_URL}/api/auth/signup`;
 
 try {
-  const res = await axios.post(`${BASE_URL}/api/auth/login`, formData);
+  const res = await axios.post(url, formData);
   localStorage.setItem("token", res.data.token);
   navigate("/tasks");
 } catch (err) {
