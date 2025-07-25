@@ -134,7 +134,7 @@ const [ setFilteredTasks] = useState([]);
   className="btn btn-primary"
   onClick={async () => {
     await handleAdd();
-    window.location.reload(); // ❗ Reloads the entire app
+    window.location.href = "https://frontend-km74.onrender.com/tasks"; // ❗ Redirects to the tasks page
   }}
 >
   Add Task
