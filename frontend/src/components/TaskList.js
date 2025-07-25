@@ -44,23 +44,25 @@ const handleAdd = async () => {
     return;
   }
 
-  try {
-    await axios.post(
-      "http://localhost:5000/api/tasks",
-      {
-        title: title.trim(),    // ✅ safe to send
-        dueDate: dueDate || null,
+  const BASE_URL = process.env.REACT_APP_API_URL;
+
+try {
+  await axios.post(
+    `${BASE_URL}/api/tasks`,
+    {
+      title: title.trim(),    // ✅ safe to send
+      dueDate: dueDate || null,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
       },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    setTitle("");
-    setDueDate("");
-    fetchTasks();
-  } catch (err) {
+    }
+  );
+  setTitle("");
+  setDueDate("");
+  fetchTasks();
+} catch (err) {
     console.error("Add task error:", err.response?.data || err.message);
   }
 };

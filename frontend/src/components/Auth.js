@@ -21,11 +21,13 @@ const Auth = () => {
   const baseURL = "http://localhost:5000"; // ✅ backend server
   const url = isLogin ? `${baseURL}/api/auth/login` : `${baseURL}/api/auth/signup`;
 
-  try {
-    const res = await axios.post(url, formData);
-    localStorage.setItem("token", res.data.token);
-    navigate("/tasks");
-  } catch (err) {
+  const BASE_URL = process.env.REACT_APP_API_URL;
+
+try {
+  const res = await axios.post(`${BASE_URL}/api/auth/login`, formData);
+  localStorage.setItem("token", res.data.token);
+  navigate("/tasks");
+} catch (err) {
     alert(err.response?.data?.message || "Something went wrong");
   }
 };
