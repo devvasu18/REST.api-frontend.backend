@@ -20,7 +20,7 @@ const TaskList = () => {
   }
 
   try {
-    const res = await axios.get("https://backend-bgcb.onrender.com/api/tasks", {
+    const res = await axios.get(`${BASE_URL}/api/tasks`, {
       headers: {
         Authorization: "Bearer " + token
       }
@@ -44,7 +44,8 @@ const handleAdd = async () => {
     return;
   }
 
-  const BASE_URL = process.env.REACT_APP_API_URL;
+  const BASE_URL = "https://backend-bgcb.onrender.com";
+
 
 try {
   await axios.post(
