@@ -130,9 +130,16 @@ const [ setFilteredTasks] = useState([]);
           value={dueDate}
           onChange={(e) => setDueDate(e.target.value)}
         />
-        <button className="btn btn-primary" onClick={handleAdd}>
-          Add Task
-        </button>
+        <button
+  className="btn btn-primary"
+  onClick={async () => {
+    await handleAdd();
+    window.location.reload(); // ❗ Reloads the entire app
+  }}
+>
+  Add Task
+</button>
+
       </div>
 
       {/* ✅ Render Task Cards */}
