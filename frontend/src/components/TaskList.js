@@ -13,88 +13,84 @@ const TaskList = () => {
 
   // 🔁 Fetch tasks
  const fetchTasks = async () => {
-  const token = localStorage.getItem("token");
-  if (!token) {
-    console.error("No token found in localStorage");
-    return;
-  }
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.error("No token found");
+      return;
+    }
 
-  try {
-    const res = await axios.get(`${BASE_URL}/api/tasks`, {
-      headers: {
-        Authorization: "Bearer " + token
-      }
-    });
-    setTasks(res.data);
-  } catch (err) {
-    console.error("Fetch tasks error:", err.response?.data || err.message);
-  }
-};
+    try {
+      const res = await axios.get(`${BASE_URL}/api/tasks`, {
+        headers: { Authorization: "Bearer " + token },
+      });
+      setTasks(res.data); // updates tasks
+    } catch (err) {
+      console.error("Fetch tasks error:", err.response?.data || err.message);
+    }
+  };
 
 
+  useEffect(() => {
+    setFilteredTasks(tasks); // Sync when tasks update
+  }, [tasks]);
   useEffect(() => {
     fetchTasks();
   }, []);
 
   // ➕ Add task
-const handleAdd = async () => {
-  const token = localStorage.getItem("token");
-  if (!title.trim()) {
-    alert("Task title is required");
-    return;
-  }
-
-  const BASE_URL = "https://backend-bgcb.onrender.com";
-
-
-try {
-  await axios.post(
-    `${BASE_URL}/api/tasks`,
-    {
-      title: title.trim(),    // ✅ safe to send
-      dueDate: dueDate || null,
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+// ✅ 4. Add task and fetch again
+  const handleAdd = async () => {
+    const token = localStorage.getItem("token");
+    if (!title.trim()) {
+      alert("Task title is required");
+      return;
     }
-  );
-  setTitle("");
-  setDueDate("");
-  fetchTasks();
-} catch (err) {
-    console.error("Add task error:", err.response?.data || err.message);
-  }
-};
 
+    try {
+      await axios.post(
+        `${BASE_URL}/api/tasks`,
+        { title: title.trim(), dueDate: dueDate || null },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
 
-
-  // ❌ Delete task
-  const handleDelete = async (id) => {
-    await axios.delete(`https://backend-bgcb.onrender.com/api/tasks/${id}`, {
-      headers: {
-        Authorization: "Bearer " + localStorage.getItem("token")
-      }
-    });
-    fetchTasks();
+      setTitle("");        // clear input
+      setDueDate("");      // clear date
+      fetchTasks();        // refresh list
+    } catch (err) {
+      console.error("Add task error:", err.response?.data || err.message);
+    }
   };
 
-  // ✅ Toggle completion with checkbox
-  const toggleCompletion = async (task) => {
+
+
+// ✅ 5. Delete task
+  const handleDelete = async (taskId) => {
+    const token = localStorage.getItem("token");
+
     try {
-      const res = await axios.put(`https://backend-bgcb.onrender.com/api/tasks/${task._id}`,
-        { completed: !task.completed },
-        {
-          headers: {
-            Authorization: "Bearer " + localStorage.getItem("token")
-          }
-        }
-      );
-      const updatedTask = res.data;
-      setTasks(prev => prev.map(t => t._id === updatedTask._id ? updatedTask : t));
+      await axios.delete(`${BASE_URL}/api/tasks/${taskId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      fetchTasks(); // refresh list
     } catch (err) {
-      console.error("Error updating task", err);
+      console.error("Delete error:", err.response?.data || err.message);
+    }
+  };
+
+ 
+  // ✅ 6. Toggle completion
+  const toggleCompletion = async (task) => {
+    const token = localStorage.getItem("token");
+
+    try {
+      await axios.put(
+        `${BASE_URL}/api/tasks/${task._id}`,
+        { completed: !task.completed },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      fetchTasks(); // refresh list
+    } catch (err) {
+      console.error("Toggle error:", err.response?.data || err.message);
     }
   };
 
@@ -115,57 +111,31 @@ try {
     filteredTasks.sort((a, b) => new Date(b.dueDate) - new Date(a.dueDate));
   }
 
-  return (
+ return (
     <div className="container mt-4">
-      <h2 className="text-center mb-4">📝 Task Manager</h2>
+      <h2>📝 Task Manager</h2>
 
-      {/* Add Task */}
-      <div className="input-group mb-3">
+      <div className="d-flex mb-3">
         <input
           type="text"
-          className="form-control"
-          placeholder="Enter task title"
+          className="form-control me-2"
+          placeholder="Task title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
         <input
           type="date"
-          className="form-control"
+          className="form-control me-2"
           value={dueDate}
           onChange={(e) => setDueDate(e.target.value)}
         />
-        <button className="btn btn-primary" onClick={handleAdd}>Add Task</button>
+        <button className="btn btn-primary" onClick={handleAdd}>
+          Add Task
+        </button>
       </div>
 
-      {/* Filter Buttons */}
-      <div className="btn-group mb-3">
-        <button className="btn btn-outline-primary" onClick={() => setFilter("all")}>All</button>
-        <button className="btn btn-outline-success" onClick={() => setFilter("completed")}>Completed</button>
-        <button className="btn btn-outline-danger" onClick={() => setFilter("incomplete")}>Incomplete</button>
-      </div>
-
-      {/* 🔍 Search + Sort UI */}
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        <input
-          type="text"
-          className="form-control me-2"
-          placeholder="Search by title..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-        <select
-          className="form-select w-auto"
-          value={sortOrder}
-          onChange={(e) => setSortOrder(e.target.value)}
-        >
-          <option value="none">Sort by Due Date</option>
-          <option value="asc">Oldest First</option>
-          <option value="desc">Newest First</option>
-        </select>
-      </div>
-
-      {/* 📋 Filtered Task List */}
-      {filteredTasks.map(task => (
+      {/* ✅ Render Task Cards */}
+      {filteredTasks.map((task) => (
         <div key={task._id} className="card p-3 mb-2">
           <div className="d-flex justify-content-between align-items-center">
             <div className="d-flex flex-column">
@@ -176,7 +146,7 @@ try {
                   checked={task.completed}
                   onChange={() => toggleCompletion(task)}
                 />
-                <span style={{ textDecoration: task.completed ? 'line-through' : 'none' }}>
+                <span style={{ textDecoration: task.completed ? "line-through" : "none" }}>
                   {task.title}
                 </span>
               </div>
@@ -186,7 +156,9 @@ try {
                 </small>
               )}
             </div>
-            <button className="btn btn-danger btn-sm" onClick={() => handleDelete(task._id)}>Delete</button>
+            <button className="btn btn-danger btn-sm" onClick={() => handleDelete(task._id)}>
+              Delete
+            </button>
           </div>
         </div>
       ))}
