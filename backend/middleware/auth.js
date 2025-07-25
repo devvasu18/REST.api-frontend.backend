@@ -10,7 +10,7 @@ module.exports = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET); // ✅ Verify first
-    console.log("Decoded JWT:", decoded); // ✅ Then log it (optional)
+   
     req.user = decoded.user || decoded;  // ✅ Ensure compatibility with both structures
     next();
   } catch (err) {
